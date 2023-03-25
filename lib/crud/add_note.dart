@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:notes/data/firebase_service.dart';
+import 'package:notes/data/services/firebase_service.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,7 +23,7 @@ class _AddNotesState extends State<AddNotes> {
 
   late File? file;
 
-  String? title, note, imageUrl;
+  String? title, description, imageUrl;
 
   GlobalKey<FormState> formState = GlobalKey<FormState>();
 
@@ -31,7 +31,6 @@ class _AddNotesState extends State<AddNotes> {
     if (file == null) {
       return AwesomeDialog(
           context: context,
-          // title: "هام",
           body: const Text("Please choose Image"),
           dialogType: DialogType.error)
         ..show();
@@ -42,7 +41,7 @@ class _AddNotesState extends State<AddNotes> {
       formData.save();
       await ref.putFile(file!);
       imageUrl = await ref.getDownloadURL();
-      await firebaseService.addNote(title, note, imageUrl).then((value) {
+      await firebaseService.addNote(title, description, imageUrl).then((value) {
         Navigator.of(context).pushNamed("/");
       }).catchError((e) {
       });
@@ -95,7 +94,7 @@ class _AddNotesState extends State<AddNotes> {
                     return null;
                   },
                   onSaved: (val) {
-                    note = val;
+                    description = val;
                   },
                   minLines: 1,
                   maxLines: 3,

@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../component/alert.dart';
-import '../data/firebase_service.dart';
+import '../data/services/firebase_service.dart';
 
 class EditNotes extends StatefulWidget {
   final QueryDocumentSnapshot? notes;

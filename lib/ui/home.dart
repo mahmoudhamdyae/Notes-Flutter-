@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:notes/data/account_service.dart';
-import 'package:notes/data/firebase_service.dart';
+import 'package:notes/data/services/account_service.dart';
+import 'package:notes/data/services/firebase_service.dart';
 
 import '../crud/edit_note.dart';
 import '../crud/view_note.dart';
@@ -55,15 +55,8 @@ class _HomePageState extends State<HomePage> {
                   itemCount: snapshot.data?.docs.length,
                   itemBuilder: (context, i) {
                     return Dismissible(
-
-                      // todo del note
                         onDismissed: (direction) async {
-                          // await notesRef
-                          //     .doc(snapshot.data?.docs[i].id)
-                          //     .delete();
-                          // await FirebaseStorage.instance
-                          //     .refFromURL(snapshot.data?.docs[i]['imageUrl'])
-                          //     .delete();
+                          await firebaseService.delNote(snapshot.data?.docs[i].id);
                         },
                         key: UniqueKey(),
                         child: NoteItem(

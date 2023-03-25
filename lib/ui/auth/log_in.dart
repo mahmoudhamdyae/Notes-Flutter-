@@ -1,7 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:notes/data/account_service.dart';
+import 'package:notes/data/services/account_service.dart';
 
 import '../../component/alert.dart';
 

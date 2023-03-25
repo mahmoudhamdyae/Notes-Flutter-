@@ -20,22 +20,8 @@ class AccountService {
   }
 
   Future<UserCredential?> signUp(String userName, String email, String password) async {
-    await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password).then((userCredential) {
-          saveUserInDatabase(userName, email, password).then((value) {
-            return userCredential;
-          });
-    });
-    return null;
-  }
-
-  Future saveUserInDatabase(String userName, String email, String password) async {
-    return await FirebaseFirestore.instance
-        .collection("users")
-        .add({
-      "userName": userName,
-      "email": email
-    });
+    return await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
   }
 
   Future<void> signOut() async {

@@ -23,7 +23,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
       theme: ThemeData(
           primaryColor: Colors.blue,
           textTheme: const TextTheme(
@@ -31,6 +30,7 @@ class MyApp extends StatelessWidget {
             headlineSmall: TextStyle(fontSize: 30, color: Colors.blue),
             bodyMedium: TextStyle(fontSize: 20, color: Colors.black),
           )),
+      initialRoute: "/",
       routes: {
         "/": (context) => const HomePage(),
         "/log_in": (context) => const LogIn(),
