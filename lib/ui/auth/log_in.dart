@@ -23,7 +23,7 @@ class _LogInState extends State<LogIn> {
       try {
         showLoading(context);
         await AccountService().logIn(email!, password!).then((userCredential) {
-          return userCredential;
+          Navigator.of(context).pushReplacementNamed("/");
         });
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
@@ -67,7 +67,9 @@ class _LogInState extends State<LogIn> {
                           prefixIcon: Icon(Icons.person),
                           hintText: "Email",
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(width: 1))),
+                              borderSide: BorderSide(width: 1)
+                          )
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
@@ -88,7 +90,9 @@ class _LogInState extends State<LogIn> {
                           prefixIcon: Icon(Icons.person),
                           hintText: "Password",
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(width: 1))),
+                              borderSide: BorderSide(width: 1)
+                          )
+                      ),
                     ),
                     Container(
                         margin: const EdgeInsets.all(10),
@@ -109,11 +113,7 @@ class _LogInState extends State<LogIn> {
                         )),
                     ElevatedButton(
                       onPressed: () async {
-                        await logIn().then((userCredential) {
-                          if (userCredential != null) {
-                            Navigator.of(context).pushReplacementNamed("/");
-                          }
-                        });
+                        await logIn();
                       },
                       child: Text(
                         "Sign in",

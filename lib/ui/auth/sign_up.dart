@@ -24,7 +24,7 @@ class _SignUpState extends State<SignUp> {
       try {
         showLoading(context);
         await AccountService().signUp(userName!, email!, password!).then((userCredential) {
-          return userCredential;
+          Navigator.of(context).pushReplacementNamed("/");
         });
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
@@ -90,7 +90,9 @@ class _SignUpState extends State<SignUp> {
                           prefixIcon: Icon(Icons.person),
                           hintText: "email",
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(width: 1))),
+                              borderSide: BorderSide(width: 1)
+                          )
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
@@ -111,13 +113,15 @@ class _SignUpState extends State<SignUp> {
                           prefixIcon: Icon(Icons.person),
                           hintText: "Password",
                           border: OutlineInputBorder(
-                              borderSide: BorderSide(width: 1))),
+                              borderSide: BorderSide(width: 1)
+                          )
+                      ),
                     ),
                     Container(
                         margin: const EdgeInsets.all(10),
                         child: Row(
                           children: [
-                            const Text("if you have Account "),
+                            const Text("If you have Account "),
                             InkWell(
                               onTap: () {
                                 Navigator.of(context).pushNamed("login");
@@ -131,11 +135,7 @@ class _SignUpState extends State<SignUp> {
                         )),
                     ElevatedButton(
                       onPressed: () async {
-                        signUp().then((userCredential) {
-                          if (userCredential != null) {
-                            Navigator.of(context).pushReplacementNamed("/");
-                          }
-                        });
+                        await signUp();
                       },
                       child: Text(
                         "Sign Up",

@@ -14,13 +14,13 @@ class AccountService {
     currentUserId = currentUser?.uid;
   }
 
-  Future<UserCredential?> logIn(String email, String password) async {
-    return await FirebaseAuth.instance
+  Future logIn(String email, String password) async {
+    await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
   }
 
-  Future<UserCredential?> signUp(String userName, String email, String password) async {
-    return await FirebaseAuth.instance
+  Future signUp(String userName, String email, String password) async {
+    await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
   }
 
