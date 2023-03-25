@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:notes/component/toast.dart';
 import 'package:notes/data/services/firebase_service.dart';
+import 'package:notes/data/services/firebase_storage_service.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import '../component/alert.dart';
 
@@ -17,33 +17,27 @@ class AddNotes extends StatefulWidget {
 }
 
 class _AddNotesState extends State<AddNotes> {
+
   FirebaseService firebaseService = FirebaseService();
+  FirebaseStorageService firebaseStorageService = FirebaseStorageService();
 
-  late Reference ref;
-
-  late File? file;
+  File? file;
 
   String? title, description, imageUrl;
 
   GlobalKey<FormState> formState = GlobalKey<FormState>();
 
   addNote(context) async {
-    if (file == null) {
-      return AwesomeDialog(
-          context: context,
-          body: const Text("Please choose Image"),
-          dialogType: DialogType.error)
-        ..show();
-    }
     var formData = formState.currentState;
     if (formData!.validate()) {
       showLoading(context);
       formData.save();
-      await ref.putFile(file!);
-      imageUrl = await ref.getDownloadURL();
+      await firebaseStorageService.putFile(file!);
+      imageUrl = await firebaseStorageService.getDownloadUrl();
       await firebaseService.addNote(title, description, imageUrl).then((value) {
         Navigator.of(context).pushNamed("/");
       }).catchError((e) {
+        showToast(e.toString());
       });
     }
   }
@@ -54,6 +48,17 @@ class _AddNotesState extends State<AddNotes> {
       appBar: AppBar(
         title: const Text('Add Note'),
       ),
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
+          child: const Icon(Icons.save),
+          onPressed: () {
+            if (file == null) {
+              showToast("Please choose Image");
+            } else {
+              addNote(context);
+            }
+          }
+      ),
       body: Column(
         children: [
           Form(
@@ -61,13 +66,8 @@ class _AddNotesState extends State<AddNotes> {
               child: Column(children: [
                 TextFormField(
                   validator: (val) {
-                    if (val != null) {
-                      if (val.length > 30) {
-                        return "Title can't to be larger than 30 letter";
-                      }
-                      if (val.length < 2) {
-                        return "Title can't to be less than 2 letter";
-                      }
+                    if (val == null || val.isEmpty) {
+                      return "Title can't be empty";
                     }
                     return null;
                   },
@@ -82,23 +82,11 @@ class _AddNotesState extends State<AddNotes> {
                       prefixIcon: Icon(Icons.note)),
                 ),
                 TextFormField(
-                  validator: (val) {
-                    if (val != null) {
-                      if (val.length > 255) {
-                        return "Notes can't to be larger than 255 letter";
-                      }
-                      if (val.length < 10) {
-                        return "Notes can't to be less than 10 letter";
-                      }
-                    }
-                    return null;
-                  },
                   onSaved: (val) {
                     description = val;
                   },
                   minLines: 1,
                   maxLines: 3,
-                  maxLength: 200,
                   decoration: const InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -111,18 +99,6 @@ class _AddNotesState extends State<AddNotes> {
                   },
                   child: const Text("Add Image For Note"),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 10),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await addNote(context);
-                    },
-                    child: Text(
-                      "Add Note",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                )
               ]))
         ],
       ),
@@ -151,10 +127,7 @@ class _AddNotesState extends State<AddNotes> {
                       file = File(picked.path);
                       var rand = Random().nextInt(100000);
                       var imageName = "$rand${basename(picked.path)}";
-                      ref = FirebaseStorage.instance
-                          .ref("images")
-                          .child(imageName);
-
+                      firebaseStorageService.setRef(imageName);
                       if (mounted) Navigator.of(context).pop();
                     }
                   },
@@ -183,9 +156,7 @@ class _AddNotesState extends State<AddNotes> {
                       file = File(picked.path);
                       var rand = Random().nextInt(100000);
                       var imageName = "$rand${basename(picked.path)}";
-                      ref = FirebaseStorage.instance
-                          .ref("images")
-                          .child(imageName);
+                      firebaseStorageService.setRef(imageName);
                       if (mounted) Navigator.of(context).pop();
                     }
                   },

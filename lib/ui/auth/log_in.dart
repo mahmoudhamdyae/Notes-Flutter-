@@ -1,6 +1,6 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notes/component/toast.dart';
 import 'package:notes/data/services/account_service.dart';
 
 import '../../component/alert.dart';
@@ -16,34 +16,25 @@ class _LogInState extends State<LogIn> {
   String? email, password;
   GlobalKey<FormState> formState = GlobalKey<FormState>();
 
-  Future<UserCredential?> logIn() async {
+  logIn() async {
     var formData = formState.currentState;
     if (formData!.validate()) {
       formData.save();
       try {
         showLoading(context);
-        AccountService().logIn(email!, password!).then((userCredential) {
+        await AccountService().logIn(email!, password!).then((userCredential) {
           return userCredential;
         });
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           Navigator.of(context).pop();
-          AwesomeDialog(
-              context: context,
-              title: "Error",
-              body: const Text("No user found for that email")
-          ).show();
+          showToast("No user found for that email");
         } else if (e.code == 'wrong-password') {
           Navigator.of(context).pop();
-          AwesomeDialog(
-              context: context,
-              title: "Error",
-              body: const Text("Wrong password provided for that user")
-          ).show();
+          showToast("Wrong password provided for that user");
         }
       }
     }
-    return null;
   }
 
   @override

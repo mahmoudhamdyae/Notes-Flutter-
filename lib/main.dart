@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:notes/component/toast.dart';
 import 'package:notes/crud/edit_note.dart';
 import 'package:notes/crud/view_note.dart';
 import 'package:notes/ui/auth/log_in.dart';
@@ -21,8 +23,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FToast().init(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      builder: FToastBuilder(),
       theme: ThemeData(
           primaryColor: Colors.blue,
           textTheme: const TextTheme(
@@ -36,8 +40,6 @@ class MyApp extends StatelessWidget {
         "/log_in": (context) => const LogIn(),
         "/sign_up": (context) => const SignUp(),
         "/add_note": (context) => const AddNotes(),
-        "/edit_note": (context) => const EditNotes(),
-        "/view_note": (context) => const ViewNote(),
 
       },
     );

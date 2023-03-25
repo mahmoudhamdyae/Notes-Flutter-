@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:notes/crud/edit_note.dart';
 
 class ViewNote extends StatefulWidget {
   final QueryDocumentSnapshot? note;
-  const ViewNote({Key? key, this.note}) : super(key: key);
+  final String? noteId;
+  const ViewNote({Key? key, required this.note, required this.noteId}) : super(key: key);
 
   @override
   State<ViewNote> createState() => _ViewNoteState();
@@ -15,6 +17,15 @@ class _ViewNoteState extends State<ViewNote> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('View Notes'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        onPressed: () {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>
+          EditNote(noteId: widget.noteId, note: widget.note)
+          ));
+        },
+        child: const Icon(Icons.edit),
       ),
       body: Column(
         children: [

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:notes/component/toast.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,20 +10,20 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../component/alert.dart';
 import '../data/services/firebase_service.dart';
 
-class EditNotes extends StatefulWidget {
-  final QueryDocumentSnapshot? notes;
+class EditNote extends StatefulWidget {
+  final QueryDocumentSnapshot? note;
   final String? noteId;
-  const EditNotes({Key? key, this.noteId, this.notes}) : super(key: key);
+  const EditNote({Key? key, required this.noteId, required this.note}) : super(key: key);
 
   @override
-  State<EditNotes> createState() => _EditNotesState();
+  State<EditNote> createState() => _EditNoteState();
 }
 
-class _EditNotesState extends State<EditNotes> {
+class _EditNoteState extends State<EditNote> {
 
   FirebaseService firebaseService = FirebaseService();
   late Reference ref;
-  late File? file;
+  File? file;
 
   String? title, note, imageUrl;
 
@@ -38,6 +39,7 @@ class _EditNotesState extends State<EditNotes> {
         await firebaseService.updateNote(widget.noteId!, title, note, imageUrl).then((value) {
           Navigator.of(context).pushReplacementNamed("/");
         }).catchError((e) {
+          showToast(e.toString());
         });
       }
     } else {
@@ -49,6 +51,7 @@ class _EditNotesState extends State<EditNotes> {
         await firebaseService.updateNote(widget.noteId!, title, note, imageUrl).then((value) {
           Navigator.of(context).pushReplacementNamed("/");
         }).catchError((e) {
+          showToast(e.toString());
         });
       }
     }
@@ -60,28 +63,29 @@ class _EditNotesState extends State<EditNotes> {
       appBar: AppBar(
         title: const Text('Edit Note'),
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        child: const Icon(Icons.save),
+        onPressed: () {
+          updateNote(context);
+        }
+      ),
       body: Column(
         children: [
           Form(
               key: formState,
               child: Column(children: [
                 TextFormField(
-                  initialValue: widget.notes!['title'],
+                  initialValue: widget.note!['title'],
                   validator: (val) {
-                    if (val != null) {
-                      if (val.length > 30) {
-                        return "Title can't to be larger than 30 letter";
-                      }
-                      if (val.length < 2) {
-                        return "Title can't to be less than 2 letter";
-                      }
+                    if (val == null || val.isEmpty) {
+                      return "Title can't be empty";
                     }
                     return null;
                   },
                   onSaved: (val) {
                     title = val;
                   },
-                  maxLength: 30,
                   decoration: const InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -89,24 +93,12 @@ class _EditNotesState extends State<EditNotes> {
                       prefixIcon: Icon(Icons.note)),
                 ),
                 TextFormField(
-                  initialValue: widget.notes!['note'],
-                  validator: (val) {
-                    if (val != null) {
-                      if (val.length > 255) {
-                        return "Notes can't to be larger than 255 letter";
-                      }
-                      if (val.length < 10) {
-                        return "Notes can't to be less than 10 letter";
-                      }
-                    }
-                    return null;
-                  },
+                  initialValue: widget.note!['note'],
                   onSaved: (val) {
                     note = val;
                   },
                   minLines: 1,
                   maxLines: 3,
-                  maxLength: 200,
                   decoration: const InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
@@ -119,18 +111,6 @@ class _EditNotesState extends State<EditNotes> {
                   },
                   child: const Text("Edit Image For Note"),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 10),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await updateNote(context);
-                    },
-                    child: Text(
-                      "Edit Note",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
-                )
               ]))
         ],
       ),

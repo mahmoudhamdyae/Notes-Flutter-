@@ -46,7 +46,8 @@ class _HomePageState extends State<HomePage> {
           child: const Icon(Icons.add),
           onPressed: () {
             Navigator.of(context).pushNamed("/add_note");
-          }),
+          }
+          ),
       body: FutureBuilder(
           future: firebaseService.getNotes(),
           builder: (context, snapshot) {
@@ -80,7 +81,7 @@ class NoteItem extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return ViewNote(note: note);
+          return ViewNote(note: note, noteId: noteId);
         }));
       },
       child: Card(
@@ -106,7 +107,7 @@ class NoteItem extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) {
-                      return EditNotes(noteId: noteId, notes: note);
+                      return EditNote(noteId: noteId, note: note);
                     }));
                   },
                   icon: const Icon(Icons.edit),

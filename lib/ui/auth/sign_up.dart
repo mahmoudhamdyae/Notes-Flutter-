@@ -1,6 +1,6 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:notes/component/toast.dart';
 import 'package:notes/data/services/account_service.dart';
 
 import '../../component/alert.dart';
@@ -16,35 +16,26 @@ class _SignUpState extends State<SignUp> {
   late String? userName, password, email;
   GlobalKey<FormState> formState = GlobalKey<FormState>();
 
-  Future<UserCredential?> signUp() async {
+  signUp() async {
     var formData = formState.currentState;
     if (formData!.validate()) {
       formData.save();
 
       try {
         showLoading(context);
-        AccountService().signUp(userName!, email!, password!).then((userCredential) {
+        await AccountService().signUp(userName!, email!, password!).then((userCredential) {
           return userCredential;
         });
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           Navigator.of(context).pop();
-          AwesomeDialog(
-              context: context,
-              title: "Error",
-              body: const Text("Password is to weak"))
-            .show();
+          showToast("Password is to weak");
         } else if (e.code == 'email-already-in-use') {
           Navigator.of(context).pop();
-          AwesomeDialog(
-              context: context,
-              title: "Error",
-              body: const Text("The account already exists for that email"))
-            .show();
+          showToast("The account already exists for that email");
         }
       }
     }
-    return null;
   }
 
   @override
