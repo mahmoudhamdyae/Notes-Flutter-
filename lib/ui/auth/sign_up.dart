@@ -78,11 +78,11 @@ class _SignUpState extends State<SignUp> {
                         email = val;
                       },
                       validator: (val) {
-                        if (val!.length > 100) {
-                          return "Email can't to be larger than 100 letter";
+                        if (val == null || val.isEmpty) {
+                          return "Email can't to be empty";
                         }
-                        if (val.length < 2) {
-                          return "Email can't to be less than 2 letter";
+                        else if (val.length < 5) {
+                          return "Email is too short";
                         }
                         return null;
                       },
@@ -100,11 +100,10 @@ class _SignUpState extends State<SignUp> {
                         password = val;
                       },
                       validator: (val) {
-                        if (val!.length > 100) {
-                          return "Password can't to be larger than 100 letter";
-                        }
-                        if (val.length < 4) {
-                          return "Password can't to be less than 4 letter";
+                        if (val == null || val.isEmpty) {
+                          return "Password can't be empty";
+                        } else if (val.length < 6) {
+                          return "Password is too short";
                         }
                         return null;
                       },

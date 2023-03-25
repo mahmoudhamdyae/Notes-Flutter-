@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AccountService {
@@ -14,12 +13,12 @@ class AccountService {
     currentUserId = currentUser?.uid;
   }
 
-  Future logIn(String email, String password) async {
+  Future<void> logIn(String email, String password) async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
   }
 
-  Future signUp(String userName, String email, String password) async {
+  Future<void> signUp(String userName, String email, String password) async {
     await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
   }
